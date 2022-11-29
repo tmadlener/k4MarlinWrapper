@@ -28,6 +28,7 @@ DECLARE_COMPONENT(MarlinProcessorWrapper)
 
 MarlinProcessorWrapper::MarlinProcessorWrapper(const std::string& name, ISvcLocator* pSL) : GaudiAlgorithm(name, pSL) {
   // register log level names with the logstream ---------
+  streamlog::out.init(std::cout, "k4MarlinWrapper");
   streamlog::out.addLevelName<streamlog::DEBUG>();
   streamlog::out.addLevelName<streamlog::DEBUG0>();
   streamlog::out.addLevelName<streamlog::DEBUG1>();
@@ -152,8 +153,7 @@ StatusCode MarlinProcessorWrapper::initialize() {
   // initalize global marlin information, maybe betters as a _tool_
   static bool once = true;
   if (once) {
-    once = false;
-    streamlog::out.init(std::cout, "k4MarlinWrapper");
+    once                       = false;
     marlin::Global::parameters = new marlin::StringParameters();
     marlin::Global::parameters->add("AllowToModifyEvent", {"true"});
 
@@ -229,6 +229,12 @@ StatusCode MarlinProcessorWrapper::execute() {
     if (edm_sc.isFailure()) {
       error() << "Failed to convert EDM4hep to LCIO collections" << endmsg;
     }
+  }
+
+  for (const auto& name : *the_event->getCollectionNames()) {
+    const auto* coll = the_event->getCollection(name);
+    error() << "Collection " << name << " with type " << coll->getTypeName() << " and " << coll->getNumberOfElements()
+            << endmsg;
   }
 
   // call the refreshSeeds via the processor manager

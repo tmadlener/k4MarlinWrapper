@@ -140,6 +140,10 @@ StatusCode Lcio2EDM4hepTool::convertCollections(lcio::LCEventImpl* the_event) {
     }
   }
 
+  for (const auto& [edm, lcio] : collsToConvert) {
+    debug() << "Converting " << edm << " to " << lcio << endmsg;
+  }
+
   // Convert Event Header outside the collections loop
   if (!collectionExist("EventHeader")) {
     convertRegister<edm4hep::EventHeaderCollection>("EventHeader", "EventHeader", lcio_converter, nullptr);

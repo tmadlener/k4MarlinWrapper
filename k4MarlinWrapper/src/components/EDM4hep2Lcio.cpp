@@ -19,6 +19,7 @@ StatusCode EDM4hep2LcioTool::initialize() {
     return StatusCode::FAILURE;
   }
 
+  warning() << "HERE I AM" << endmsg;
   return GaudiTool::initialize();
 }
 
@@ -123,8 +124,12 @@ void EDM4hep2LcioTool::convertSimCalorimeterHits(
   auto       collID    = simcalohit_coll->getID();
   const auto cellIDstr = sim_calohit_handle.getCollMetadataCellID(collID);
 
+  debug() << "Converting SimCaloHits, have " << simcalohit_coll->size() << " elements" << endmsg;
+
   // TODO mcparticles_vdc
   auto* conv_simcalohits = convSimCalorimeterHits(simcalohit_coll, cellIDstr, sim_calo_hits_vec, mcparticles);
+
+  debug() << "converted collection has " << conv_simcalohits->getNumberOfElements() << " elements" << endmsg;
 
   // Add all Sim Calorimeter Hits to event
   lcio_event->addCollection(conv_simcalohits, lcio_coll_name);
@@ -227,6 +232,8 @@ void EDM4hep2LcioTool::convertAdd(const std::string& e4h_coll_name, const std::s
     }
   }
 
+  debug() << "Converting " << e4h_coll_name << " to " << lcio_coll_name << " type: " << fulltype << endmsg;
+
   if (fulltype == "") {
     error() << "Could not get type from collection name: " << e4h_coll_name << endmsg;
     return;
@@ -282,6 +289,10 @@ StatusCode EDM4hep2LcioTool::convertCollections(lcio::LCEventImpl* lcio_event) {
     for (const auto& [name, _] : collections) {
       collsToConvert.emplace(name, name);
     }
+  }
+
+  for (const auto& [edm, lcio] : collsToConvert) {
+    debug() << "Converting " << edm << " to " << lcio << endmsg;
   }
 
   CollectionsPairVectors collection_pairs{};

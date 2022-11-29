@@ -64,7 +64,7 @@ inp.OutputLevel = DEBUG
 
 
 MyAIDAProcessor = MarlinProcessorWrapper("MyAIDAProcessor")
-MyAIDAProcessor.OutputLevel = WARNING 
+MyAIDAProcessor.OutputLevel = DEBUG
 MyAIDAProcessor.ProcessorType = "AIDAProcessor" 
 MyAIDAProcessor.Parameters = {
                               "Compress": ["1"],
@@ -430,7 +430,7 @@ EventNumber.Parameters = {
                           }
 
 MyDDCaloDigi = MarlinProcessorWrapper("MyDDCaloDigi")
-MyDDCaloDigi.OutputLevel = WARNING
+MyDDCaloDigi.OutputLevel = DEBUG
 MyDDCaloDigi.ProcessorType = "DDCaloDigi" 
 MyDDCaloDigi.Parameters = {
                            "CalibECALMIP": ["0.0001"],
@@ -509,7 +509,8 @@ MyDDCaloDigi.Parameters = {
                            "StripEcal_default_nVirtualCells": ["9"],
                            "UseEcalTiming": ["1"],
                            "UseHcalTiming": ["1"],
-                           "energyPerEHpair": ["3.6"]
+                           "energyPerEHpair": ["3.6"],
+                           "Verbosity": ["DEBUG"],
                            }
 # LCIO to EDM4hep
 MyDDCaloDigiLCIOConv = Lcio2EDM4hepTool("MyDDCaloDigiLCIOConv")
@@ -1775,7 +1776,7 @@ algList.append(MyAIDAProcessor)
 algList.append(EventNumber)
 algList.append(InitDD4hep)
 algList.append(Config)
-algList.append(OverlayFalse)  # Config.OverlayFalse
+# algList.append(OverlayFalse)  # Config.OverlayFalse
 # algList.append(Overlay350GeV_CDR)  # Config.Overlay350GeV_CDR
 # algList.append(Overlay350GeV)  # Config.Overlay350GeV
 # algList.append(Overlay350GeV_L6)  # Config.Overlay350GeV_L6
@@ -1827,5 +1828,5 @@ ApplicationMgr( TopAlg = algList,
                 EvtSel = 'NONE',
                 EvtMax   = 3,
                 ExtSvc = [evtsvc],
-                OutputLevel=WARNING
+                OutputLevel=DEBUG
               )

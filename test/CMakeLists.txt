@@ -60,13 +60,13 @@ if (BASH_PROGRAM)
   # Test clicReconstruction with EDM4hep input and output
   # Disabled for current version in k4lcioreader
   get_target_property(k4lcioreader_PATH  k4LCIOReader::k4LCIOReader LOCATION)
-  if(${k4lcioreader_PATH} MATCHES  "sw[-]nightlies")
+  # if(${k4lcioreader_PATH} MATCHES  "sw[-]nightlies")
     add_test( clicRec_edm4hep_input ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/clicRec_e4h_input.sh )
     set_tests_properties ( clicRec_edm4hep_input
       PROPERTIES
       PASS_REGULAR_EXPRESSION "Input and output have same number of events")
     LIST(APPEND OPTIONAL_TESTS clicRec_edm4hep_input)
-  endif()
+  # endif()
 
   # Run clicReconstruction sequence with LCIO input and output, no converters, with inter-event parallelism
   add_test( clicRec_lcio_mt ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/clicRec_lcio_mt.sh )
