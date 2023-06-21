@@ -12,6 +12,17 @@
 //k4EDM4hep2LcioConv
 #include "k4EDM4hep2LcioConv/k4EDM4hep2LcioConv.h"
 
+#if __has_include("edm4hep/RawTimeSeries.h")
+#include <edm4hep/RawTimeSeriesCollection.h>
+#else
+#include <edm4hep/TPCHitCollection.h>
+namespace edm4hep {
+  using RawTimeSeries           = TPCHit;
+  using MutableRawTimeSeries    = MutableTPCHit;
+  using RawTimeSeriesCollection = TPCHitCollection;
+}  // namespace edm4hep
+#endif
+
 // GAUDI
 #include <GaudiAlg/GaudiTool.h>
 
