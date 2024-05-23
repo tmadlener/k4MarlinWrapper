@@ -22,8 +22,10 @@ import sys
 from Configurables import (
     LcioEvent,
     PodioInput,
+    PodioOutput,
     MarlinProcessorWrapper,
     EDM4hep2LcioTool,
+    Lcio2EDM4hepTool,
 )
 
 
@@ -62,3 +64,30 @@ def attach_edm4hep2lcio_conversion(algList, read):
     # Adjust for the different naming conventions
     EDM4hep2LcioInput.collNameMapping = {"MCParticles": "MCParticle"}
     alg.EDM4hep2LcioTool = EDM4hep2LcioInput
+
+
+def attach_lcio2edm4hep_conversion(algList):
+    """Attach EDM4hep to LCIO conversion in all points in the algList in front
+    of PodioOutput algorithms, such that the complete LCIO event content is
+    converted to EDM4hep
+    """
+    # Find all the indices where a PodioOutput algorithm appears
+    podout_idcs = [i for i, a in enumerate(algList) if isinstance(a, PodioOutput)]
+    # For each of those check the preceeding algorithms to attach a conversion
+    # (if none exists already)
+    for idx in podout_idcs:
+        prev_algs = algList[idx - 1 :: -1]
+        for alg in prev_algs:
+            if isinstance(alg, MarlinProcessorWrapper):
+                if alg.Lcio2EDM4hepTool is not None:
+                    lcio2edm4hep = EDM4hep2LcioTool(
+                        f"OutConv_{algList[idx].name()}_{alg.name()}"
+                    )
+                    lcio2edm4hep.convertAll = True
+                    # Adapt for the slightly different naming schemes
+                    lcio2edm4hep.collNameMapping = {"MCParticle": "MCParticles"}
+                    alg.Lcio2EDM4hepTool = lcio2edm4hep
+
+                # Assume that the user knows what they want in this case and
+                # don't try to do something fancy
+                break
