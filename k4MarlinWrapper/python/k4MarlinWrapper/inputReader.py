@@ -17,40 +17,12 @@
 # limitations under the License.
 #
 
-import sys
-from Configurables import LcioEvent, PodioInput, MarlinProcessorWrapper, EDM4hep2LcioTool
+import warnings
 
-def create_reader(input_files, evtSvc):
-    """Create the appropriate reader for the input files"""
-    if input_files[0].endswith(".slcio"):
-        if any(not f.endswith(".slcio") for f in input_files):
-            print("All input files need to have the same format (LCIO)")
-            sys.exit(1)
+warnings.warn(
+    "The k4MarlinWrapper.inputReader module is deprecated. "
+    "Switch to the k4MarlinWrapper.io_utils module instead",
+    FutureWarning,
+)
 
-        read = LcioEvent()
-        read.Files = input_files
-    else:
-        if any(not f.endswith(".root") for f in input_files):
-            print("All input files need to have the same format (EDM4hep)")
-            sys.exit(1)
-        read = PodioInput("PodioInput")
-        evtSvc.inputs = input_files
-
-    return read
-
-def attach_edm4hep2lcio_conversion(algList, read):
-    """Attach the edm4hep to lcio conversion if necessary e.g. when using create_reader. Should only be run after algList is complete."""
-    if not isinstance(read, PodioInput):
-        # nothing to convert :)
-        return
-
-     # find first wrapper
-    for alg in algList:
-        if isinstance(alg, MarlinProcessorWrapper):
-            break
-
-    EDM4hep2LcioInput = EDM4hep2LcioTool("InputConversion")
-    EDM4hep2LcioInput.convertAll = True
-    # Adjust for the different naming conventions
-    EDM4hep2LcioInput.collNameMapping = {"MCParticles": "MCParticle"}
-    alg.EDM4hep2LcioTool = EDM4hep2LcioInput
+from k4MarlinWrapper.io_utils import create_reader, attach_edm4hep2lcio_conversion
