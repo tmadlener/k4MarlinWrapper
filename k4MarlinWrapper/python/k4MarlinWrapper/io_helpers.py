@@ -28,7 +28,9 @@ from Configurables import (
     Lcio2EDM4hepTool,
 )
 
-logger = logging.getLogger()
+from k4FWCore.utils import get_logger
+
+logger = get_logger()
 
 
 def _is_wrapped_proc_without_conv(alg, from_edm, to_edm):
